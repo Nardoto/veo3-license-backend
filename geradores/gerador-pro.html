@@ -2467,26 +2467,41 @@
             }
 
             try {
-                // Atualiza no Firebase - limpa o deviceFingerprint
-                const url = `${FIREBASE_CONFIG.databaseURL}/licenses/${licenseKey}?key=${FIREBASE_CONFIG.apiKey}&updateMask.fieldPaths=deviceFingerprint`;
+                console.log('🔓 Desvinculando dispositivo da licença:', licenseKey);
+
+                // Atualiza no Firebase - limpa o deviceFingerprint E reativa o status
+                const url = `${FIREBASE_CONFIG.databaseURL}/licenses/${licenseKey}?key=${FIREBASE_CONFIG.apiKey}&updateMask.fieldPaths=deviceFingerprint&updateMask.fieldPaths=status`;
 
                 const firebaseDoc = {
                     fields: {
-                        deviceFingerprint: { stringValue: '' } // Limpa o fingerprint
+                        deviceFingerprint: { stringValue: '' }, // Limpa o fingerprint
+                        status: { stringValue: 'active' } // Reativa a licença
                     }
                 };
 
+                console.log('📤 URL:', url);
+                console.log('📦 Payload:', JSON.stringify(firebaseDoc));
+
                 const response = await fetch(url, {
                     method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify(firebaseDoc)
                 });
 
+                console.log('📥 Status da resposta:', response.status);
+
                 if (!response.ok) {
-                    throw new Error('Erro ao desvincular dispositivo');
+                    const errorText = await response.text();
+                    console.error('❌ Erro do Firebase:', errorText);
+                    throw new Error(`Firebase retornou erro: ${response.status}`);
                 }
 
-                alert(`✅ Dispositivo desvinculado com sucesso!\n\nLicença: ${licenseKey}\n\nO cliente já pode ativar a licença novamente.`);
+                const result = await response.json();
+                console.log('✅ Resposta do Firebase:', result);
+
+                alert(`✅ Dispositivo desvinculado com sucesso!\n\nLicença: ${licenseKey}\nStatus: Reativada\n\nO cliente já pode ativar a licença novamente.`);
 
                 // Fecha o modal
                 const modal = document.getElementById('detailsModal');
@@ -2496,8 +2511,8 @@
                 await loadLicensesFromFirebase();
 
             } catch (error) {
-                console.error('❌ Erro ao desvincular dispositivo:', error);
-                alert('❌ Erro ao desvincular dispositivo. Tente novamente ou use o Firebase Console.');
+                console.error('❌ Erro completo ao desvincular dispositivo:', error);
+                alert(`❌ Erro ao desvincular dispositivo.\n\nDetalhes: ${error.message}\n\nVerifique o Console (F12) para mais informações.\n\nOu use o Firebase Console diretamente.`);
             }
         }
 
