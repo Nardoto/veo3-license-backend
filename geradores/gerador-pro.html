@@ -582,7 +582,10 @@
     <!-- Dashboard -->
     <div class="dashboard">
         <div class="dashboard-header">
-            <h1 class="dashboard-title">Gerador de Licenças PRO</h1>
+            <div style="display: flex; align-items: center; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <h1 class="dashboard-title" style="margin: 0;">Gerador de Licenças PRO</h1>
+                <span style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">v3.1.0 ✓</span>
+            </div>
             <p class="dashboard-subtitle">Sistema de licenças com privacidade total - Nenhum rastreamento de uso</p>
         </div>
 
@@ -885,6 +888,14 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
+            // Banner de versão no console
+            console.log('%c🎉 Gerador de Licenças PRO v3.1.0 ', 'background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 10px 20px; border-radius: 8px; font-size: 16px; font-weight: bold;');
+            console.log('%c✅ Novidades v3.1.0:', 'color: #10b981; font-weight: bold; font-size: 14px;');
+            console.log('  🔓 Botão "Desvincular Dispositivo" - Remove vinculação de fingerprint');
+            console.log('  🔧 Botão "Corrigir Plano" - Corrige plano baseado no tipo de licença');
+            console.log('  🐛 Corrigido bug: licenças vitalícias mostrando plano "Mensal"');
+            console.log('%cData: 05/11/2024', 'color: #94a3b8; font-size: 12px;');
+
             // Carregar do Firebase primeiro
             await loadLicensesFromFirebase();
 
